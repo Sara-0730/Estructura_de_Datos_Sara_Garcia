@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-/**
- * Clase para el formulario de ingreso de clientes
- */
+
+ // Clase para el formulario de ingreso de clientes
+ 
 class FormularioCliente extends JDialog {
     private final JTextField campoCedula;
     private final JTextField campoNombre;
@@ -15,10 +15,10 @@ class FormularioCliente extends JDialog {
     private boolean guardadoExitoso = false;
     private Cliente clienteCreado = null;
     
-    /**
-     * Constructor del formulario
-     * @param parent Ventana padre
-     */
+    
+     //Constructor del formulario
+     // @param parent Ventana padre
+     
     public FormularioCliente(JFrame parent) {
         super(parent, "Ingresar Cliente", true);
         
@@ -82,9 +82,9 @@ class FormularioCliente extends JDialog {
         setResizable(false);
     }
     
-    /**
-     * Valida y guarda los datos del cliente
-     */
+    
+     // Valida y guarda los datos del cliente
+     
     private void guardarCliente() {
         String cedula = campoCedula.getText().trim();
         String nombre = campoNombre.getText().trim();
@@ -110,18 +110,18 @@ class FormularioCliente extends JDialog {
         dispose();
     }
     
-    /**
-     * Verifica si el cliente se guardó exitosamente
-     * @return true si se guardó, false si se canceló
-     */
+    
+     //Verifica si el cliente se guardó exitosamente
+     // @return true si se guardó, false si se canceló
+    
     public boolean isGuardadoExitoso() {
         return guardadoExitoso;
     }
     
-    /**
-     * Obtiene el cliente creado
-     * @return Cliente creado o null si se canceló
-     */
+    
+     //Obtiene el cliente creado
+     // @return Cliente creado o null si se canceló
+     
     public Cliente getClienteCreado() {
         return clienteCreado;
     }

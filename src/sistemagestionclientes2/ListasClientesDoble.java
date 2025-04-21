@@ -4,35 +4,37 @@ class ListaClientesDoble {
     private NodoDoble ultimo;    // Referencia al último nodo
     private int tamaño;         // Contador de elementos
     
-    /**
-     * Constructor para crear una lista vacía
-     */
+    
+    
+    //Constructor para crear una lista vacía
+    
     public ListaClientesDoble() {
         this.primero = null;
         this.ultimo = null;
         this.tamaño = 0;
     }
     
-    /**
-     * Verifica si la lista está vacía
-     * @return true si la lista está vacía, false en caso contrario
-     */
+    
+      
+   //Verifica si la lista está vacía
+     //@return true si la lista está vacía, false en caso contrario
+     
     public boolean estaVacia() {
         return primero == null;
     }
     
-    /**
-     * Obtiene el tamaño actual de la lista
-     * @return Número de elementos en la lista
-     */
+    
+     //Obtiene el tamaño actual de la lista
+     // @return Número de elementos en la lista
+     
     public int getTamaño() {
         return tamaño;
     }
     
-    /**
-     * Inserta un cliente en la lista de forma ordenada por cédula
-     * @param cliente Cliente a insertar
-     */
+    
+    //  Inserta un cliente en la lista de forma ordenada por cédula
+      // @param cliente Cliente a insertar
+     
     public void insertarOrdenado(Cliente cliente) {
         NodoDoble nuevoNodo = new NodoDoble(cliente);
         
@@ -80,10 +82,10 @@ class ListaClientesDoble {
         tamaño++;
     }
     
-    /**
-     * Lista todos los clientes desde el primero hasta el último
-     * @return String con la información de todos los clientes (de izquierda a derecha)
-     */
+    
+     //Lista todos los clientes desde el primero hasta el último
+     // @return String con la información de todos los clientes (de izquierda a derecha)
+     
     public String listarDerecha() {
         if (estaVacia()) {
             return "La lista de clientes está vacía";
@@ -106,10 +108,10 @@ class ListaClientesDoble {
         return resultado.toString();
     }
     
-    /**
-     * Lista todos los clientes desde el último hasta el primero
-     * @return String con la información de todos los clientes (de derecha a izquierda)
-     */
+    
+     //Lista todos los clientes desde el último hasta el primero
+     // @return String con la información de todos los clientes (de derecha a izquierda)
+     
     public String listarIzquierda() {
         if (estaVacia()) {
             return "La lista de clientes está vacía";

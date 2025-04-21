@@ -19,9 +19,6 @@ public class SistemaGestionClientes2 extends JFrame {
     private final JButton botonListarDerecha;
     private final JButton botonListarIzquierda;
     
-    /**
-     * Constructor de la ventana principal
-     */
     public SistemaGestionClientes2() {
         super("Sistema de Gestión de Clientes");
         listaClientes = new ListaClientesDoble();
@@ -78,9 +75,9 @@ public class SistemaGestionClientes2 extends JFrame {
         setContentPane(panelPrincipal);
     }
     
-    /**
-     * Muestra el formulario para insertar un nuevo cliente
-     */
+    
+    // Muestra el formulario para insertar un nuevo cliente
+     
     private void mostrarFormularioCliente() {
         FormularioCliente formulario = new FormularioCliente(this);
         formulario.setVisible(true);
@@ -96,26 +93,26 @@ public class SistemaGestionClientes2 extends JFrame {
         }
     }
     
-    /**
-     * Muestra la lista de clientes de izquierda a derecha
-     */
+    
+     //Muestra la lista de clientes de izquierda a derecha
+     
     private void mostrarListaDerecha() {
         String resultado = listaClientes.listarDerecha();
         areaTexto.setText("Lista de Clientes (Izquierda -> Derecha):\n" + resultado);
     }
     
-    /**
-     * Muestra la lista de clientes de derecha a izquierda
-     */
+    
+     //Muestra la lista de clientes de derecha a izquierda
+     
     private void mostrarListaIzquierda() {
         String resultado = listaClientes.listarIzquierda();
         areaTexto.setText("Lista de Clientes (Derecha -> Izquierda):\n" + resultado);
     }
     
-    /**
-     * Método principal que inicia la aplicación
-     * @param args argumentos de línea de comandos (no utilizados)
-     */
+  
+   // Método principal que inicia la aplicación
+    //@param args argumentos de línea de comandos (no utilizados)
+     
     public static void main(String[] args) {
         // Configurar look and feel nativo
         try {
