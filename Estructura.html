@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Clientes - Lista Circular</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f2f8;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff9fe;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #9b7ead;
+        }
+        h2 {
+            color: #9b7ead;
+        }
+        h3 {
+            color: #9b7ead;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #7a6c8e;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d5c8e6;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #fbf7ff;
+        }
+        input:focus {
+            outline: none;
+            border-color: #b79fcc;
+            box-shadow: 0 0 5px rgba(183, 159, 204, 0.3);
+        }
+        button {
+            background-color: #aed9e0;
+            color: #5b4c6c;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background-color: #95c8d8;
+            transform: translateY(-2px);
+        }
+        #clientesList {
+            margin-top: 20px;
+            border: 1px solid #e6d7f2;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fbf7ff;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .client-item {
+            padding: 10px;
+            border-bottom: 1px solid #f0e5fb;
+            color: #665582;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .client-item button {
+            padding: 3px 8px;
+            background-color: #f2c2cd;
+            border-radius: 4px;
+            font-size: 0.85em;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+        .client-item button:hover {
+            opacity: 1;
+            background-color: #e8a4b5;
+        }
+        .client-item:last-child {
+            border-bottom: none;
+        }
+        .menu {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f0e5fb;
+            border-radius: 10px;
+        }
+        .direction-buttons {
+            margin-top: 10px;
+        }
+        #message {
+            color: #7ca982;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .estructura {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e4f2f9;
+            border-radius: 10px;
+        }
+        .estructura h3 {
+            margin-top: 0;
+        }
+        .visualizacion {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            overflow-x: auto;
+            padding: 15px 0;
+        }
+        .nodo {
+            border: 2px solid #b8d8be;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+            position: relative;
+            background-color: #f1f9f2;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+            color: #5b715e;
+        }
+        .nodo:hover {
+            transform: scale(1.05);
+        }
+        .flecha {
+            position: absolute;
+            width: 30px;
+            height: 10px;
+            background-color: transparent;
+        }
+        .flecha-derecha {
+            right: -30px;
+        }
+        .flecha-izquierda {
+            left: -30px;
+        }
+        .flecha::after {
+            content: '';
+            position: absolute;
+            width: 0; 
+            height: 0;
+        }
+        .flecha-derecha::after {
+            border-left: 10px solid #9b7ead;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            right: 0;
+        }
+        .flecha-izquierda::after {
+            border-right: 10px solid #9b7ead;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            left: 0;
+        }
+        .linea {
+            height: 2px;
+            background-color: #9b7ead;
+            flex-grow: 1;
+        }
+        .no-clients {
+            text-align: center;
+            color: #9b7ead;
+            padding: 20px;
+            font-style: italic;
+        }
+        #contadorClientes {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #7ca982;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Gestión de Clientes</h1>
+        <div class="menu">
+            <h2>Menú de Opciones</h2>
+            <p style="text-align: center; color: #9b7ead; margin-bottom: 15px;">Límite máximo: 10 clientes</p>
+            <div class="form-group">
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula" placeholder="Ingrese la cédula del cliente">
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" placeholder="Ingrese el nombre del cliente">
+            </div>
+            <button onclick="insertarCliente()">Insertar Cliente</button>
+            <button onclick="mostrarEliminarCliente()">Eliminar Cliente</button>
+            <button onclick="listarClientesDerecha()">Listar Clientes (Derecha)</button>
+            <button onclick="listarClientesIzquierda()">Listar Clientes (Izquierda)</button>
+            <button onclick="salir()">Salir</button>
+            <div id="message"></div>
+            
+            <div id="eliminarClienteForm" style="display: none; margin-top: 15px; padding: 15px; background-color: #fde8f0; border-radius: 8px;">
+                <h3 style="margin-top: 0; color: #9b7ead;">Eliminar Cliente</h3>
+                <div class="form-group">
+                    <label for="cedulaEliminar">Cédula del cliente a eliminar:</label>
+                    <input type="text" id="cedulaEliminar" placeholder="Ingrese la cédula del cliente a eliminar">
+                </div>
+                <button onclick="eliminarCliente()">Confirmar Eliminación</button>
+                <button onclick="ocultarEliminarCliente()" style="background-color: #f2c2cd;">Cancelar</button>
+            </div>
+        </div>
+
+        <div id="clientesList">
+            <div class="no-clients">No hay clientes registrados</div>
+        </div>
+
+        <div class="estructura">
+            <h3>Visualización de la Lista Circular</h3>
+            <div id="contadorClientes" style="text-align: center; margin-bottom: 10px; color: #4CAF50; font-weight: bold;"></div>
+            <div class="visualizacion" id="visualizacion">
+                <!-- La visualización de nodos se generará dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para salir
+        function salir() {
+            const confirmSalir = confirm('¿Está seguro que desea salir?');
+            if (confirmSalir) {
+                document.getElementById('message').textContent = 'Gracias por usar el sistema.';
+                setTimeout(() => {
+                    window.close();
+                }, 1500);
+            }
+        }
+        
+        // Implementación de la Lista Circular usando POO
+        class Nodo {
+            constructor(cedula, nombre) {
+                this.cedula = cedula;
+                this.nombre = nombre;
+                this.siguiente = null;
+                this.anterior = null;
+            }
+        }
+
+        class ListaCircular {
+            constructor() {
+                this.inicio = null;
+                this.contador = 0; // Contador para controlar el límite de registros
+                this.limiteRegistros = 10; // Límite de registros establecido en 10
+            }
+
+            // Método para verificar si la lista está llena
+            estaLlena() {
+                return this.contador >= this.limiteRegistros;
+            }
+
+            // Método para obtener el número de clientes registrados
+            obtenerNumeroClientes() {
+                return this.contador;
+            }
+
+            // Método para insertar un nuevo cliente en la lista circular
+            insertar(cedula, nombre) {
+                // Verificar si la lista está llena (límite de 10 personas)
+                if (this.estaLlena()) {
+                    return false; // No se puede insertar más clientes
+                }
+                
+                // Crear un nuevo nodo con los datos del cliente
+                const nueva = new Nodo(cedula, nombre);
+
+                // Si la lista está vacía
+                if (this.inicio === null) {
+                    nueva.siguiente = nueva; // El siguiente del nuevo nodo es él mismo
+                    nueva.anterior = nueva;  // El anterior del nuevo nodo es él mismo
+                    this.inicio = nueva;     // El inicio de la lista apunta al nuevo nodo
+                } else {
+                    // Si la lista ya tiene elementos
+                    const ultimo = this.inicio.anterior; // Obtener el último nodo de la lista
+                    
+                    nueva.siguiente = this.inicio;  // El siguiente del nuevo nodo es el inicio
+                    nueva.anterior = ultimo;        // El anterior del nuevo nodo es el último
+                    
+                    ultimo.siguiente = nueva;       // El siguiente del último nodo es el nuevo
+                    this.inicio.anterior = nueva;   // El anterior del primer nodo es el nuevo
+                }
+                
+                // Incrementar el contador de clientes
+                this.contador++;
+                return true;
+            }
+
+            // Método para eliminar un cliente por su cédula
+            eliminar(cedula) {
+                // Si la lista está vacía
+                if (this.inicio === null) {
+                    return false;
+                }
+                
+                let actual = this.inicio;
+                let encontrado = false;
+                
+                // Buscar el nodo a eliminar
+                do {
+                    if (actual.cedula === cedula) {
+                        encontrado = true;
+                        break;
+                    }
+                    actual = actual.siguiente;
+                } while (actual !== this.inicio);
+                
+                // Si no se encontró el cliente
+                if (!encontrado) {
+                    return false;
+                }
+                
+                // Si es el único nodo en la lista
+                if (actual.siguiente === actual) {
+                    this.inicio = null;
+                } else {
+                    // Si es el nodo de inicio, mover el inicio al siguiente
+                    if (actual === this.inicio) {
+                        this.inicio = actual.siguiente;
+                    }
+                    
+                    // Reconectar los nodos adyacentes
+                    actual.anterior.siguiente = actual.siguiente;
+                    actual.siguiente.anterior = actual.anterior;
+                }
+                
+                // Decrementar el contador de clientes
+                this.contador--;
+                return true;
+            }
+
+            // Método para listar los clientes en dirección hacia la derecha (siguiente)
+            listarDerecha() {
+                if (!this.inicio) {
+                    return [];
+                }
+
+                const clientes = [];
+                let actual = this.inicio;
+                
+                do {
+                    clientes.push({
+                        cedula: actual.cedula,
+                        nombre: actual.nombre
+                    });
+                    actual = actual.siguiente;
+                } while (actual !== this.inicio);
+
+                return clientes;
+            }
+
+            // Método para listar los clientes en dirección hacia la izquierda (anterior)
+            listarIzquierda() {
+                if (!this.inicio) {
+                    return [];
+                }
+
+                const clientes = [];
+                let actual = this.inicio;
+                
+                // Primero agregamos el inicio
+                clientes.push({
+                    cedula: actual.cedula,
+                    nombre: actual.nombre
+                });
+                
+                // Luego recorremos hacia atrás (anterior)
+                actual = actual.anterior;
+                
+                while (actual !== this.inicio) {
+                    clientes.push({
+                        cedula: actual.cedula,
+                        nombre: actual.nombre
+                    });
+                    actual = actual.anterior;
+                }
+
+                return clientes;
+            }
+        }
+
+        // Instancia de la lista circular
+        const listaClientes = new ListaCircular();
+
+        // Función para insertar un cliente
+        function insertarCliente() {
+            const cedula = document.getElementById('cedula').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const messageElement = document.getElementById('message');
+
+            if (!cedula || !nombre) {
+                messageElement.textContent = 'Por favor, complete todos los campos.';
+                messageElement.style.color = '#d48a8a';
+                return;
+            }
+            
+            // Verificar si la lista está llena
+            if (listaClientes.estaLlena()) {
+                messageElement.textContent = 'No se pueden registrar más clientes. Se ha alcanzado el límite de 10 personas.';
+                messageElement.style.color = '#d48a8a';
+                return;
+            }
+
+            if (listaClientes.insertar(cedula, nombre)) {
+                document.getElementById('cedula').value = '';
+                document.getElementById('nombre').value = '';
+                
+                // Mostrar mensaje con el contador actual
+                const clientesRestantes = listaClientes.limiteRegistros - listaClientes.obtenerNumeroClientes();
+                messageElement.textContent = `Cliente insertado correctamente. ${listaClientes.obtenerNumeroClientes()} de ${listaClientes.limiteRegistros} registros utilizados. Quedan ${clientesRestantes} espacios disponibles.`;
+                messageElement.style.color = '#7ca982';
+                
+                // Actualizar la visualización
+                actualizarVisualizacion();
+            }
+        }
+
+        // Función para listar clientes hacia la derecha
+        function listarClientesDerecha() {
+            const clientes = listaClientes.listarDerecha();
+            mostrarClientes(clientes, 'derecha');
+        }
+
+        // Función para listar clientes hacia la izquierda
+        function listarClientesIzquierda() {
+            const clientes = listaClientes.listarIzquierda();
+            mostrarClientes(clientes, 'izquierda');
+        }
+
+        // Función para mostrar clientes en la interfaz
+        function mostrarClientes(clientes, direccion) {
+            const clientesListElement = document.getElementById('clientesList');
+            
+            if (clientes.length === 0) {
+                clientesListElement.innerHTML = '<div class="no-clients">No hay clientes registrados</div>';
+                return;
+            }
+
+            let html = `<h3>Listado de Clientes (${direccion === 'derecha' ? 'Hacia la derecha' : 'Hacia la izquierda'})</h3>`;
+            
+            clientes.forEach((cliente, index) => {
+                html += `
+                    <div class="client-item">
+                        <div>${index + 1}. Cédula: ${cliente.cedula} - Nombre: ${cliente.nombre}</div>
+                        <button onclick="prepararEliminarCliente('${cliente.cedula}')">Eliminar</button>
+                    </div>
+                `;
+            });
+
+            clientesListElement.innerHTML = html;
+        }
+        
+        // Función para preparar la eliminación desde la lista
+        function prepararEliminarCliente(cedula) {
+            document.getElementById('cedulaEliminar').value = cedula;
+            mostrarEliminarCliente();
+        }
+
+        // Función para actualizar la visualización gráfica de la lista circular
+        function actualizarVisualizacion() {
+            const visualizacionElement = document.getElementById('visualizacion');
+            const contadorElement = document.getElementById('contadorClientes');
+            const clientes = listaClientes.listarDerecha();
+            
+            // Actualizar el contador de clientes
+            if (listaClientes.obtenerNumeroClientes() > 0) {
+                contadorElement.textContent = `Clientes registrados: ${listaClientes.obtenerNumeroClientes()} de ${listaClientes.limiteRegistros} (Límite máximo)`;
+            } else {
+                contadorElement.textContent = '';
+            }
+            
+            if (clientes.length === 0) {
+                visualizacionElement.innerHTML = '<div class="no-clients">No hay nodos para visualizar</div>';
+                return;
+            }
+
+            let html = '';
+            
+            clientes.forEach((cliente, index) => {
+                html += `
+                    <div class="nodo">
+                        <div>${cliente.nombre}</div>
+                        <small>${cliente.cedula}</small>
+                        ${index < clientes.length - 1 ? '<div class="flecha flecha-derecha"></div>' : ''}
+                        ${index > 0 ? '<div class="flecha flecha-izquierda"></div>' : ''}
+                    </div>
+                    ${index < clientes.length - 1 ? '<div class="linea"></div>' : ''}
+                `;
+            });
+
+            // Agregar una línea de conexión para cerrar el círculo
+            if (clientes.length > 1) {
+                html += '<div class="linea"></div>';
+            }
+
+            visualizacionElement.innerHTML = html;
+        }
+
+        // Función para mostrar el formulario de eliminar cliente
+        function mostrarEliminarCliente() {
+            document.getElementById('eliminarClienteForm').style.display = 'block';
+            document.getElementById('message').textContent = '';
+        }
+        
+        // Función para ocultar el formulario de eliminar cliente
+        function ocultarEliminarCliente() {
+            document.getElementById('eliminarClienteForm').style.display = 'none';
+            document.getElementById('cedulaEliminar').value = '';
+        }
+        
+        // Función para eliminar un cliente
+        function eliminarCliente() {
+            const cedula = document.getElementById('cedulaEliminar').value.trim();
+            const messageElement = document.getElementById('message');
+            
+            if (!cedula) {
+                messageElement.textContent = 'Por favor, ingrese la cédula del cliente a eliminar.';
+                messageElement.style.color = '#d48a8a';
+                return;
+            }
+            
+            if (listaClientes.eliminar(cedula)) {
+                document.getElementById('cedulaEliminar').value = '';
+                document.getElementById('eliminarClienteForm').style.display = 'none';
+                
+                messageElement.textContent = `Cliente con cédula ${cedula} eliminado correctamente. Ahora hay ${listaClientes.obtenerNumeroClientes()} de ${listaClientes.limiteRegistros} registros utilizados.`;
+                messageElement.style.color = '#7ca982';
+                
+                // Actualizar la visualización
+                actualizarVisualizacion();
+                
+                // Si se estaba mostrando una lista, actualizarla
+                if (document.getElementById('clientesList').innerHTML.includes('Listado de Clientes')) {
+                    if (document.getElementById('clientesList').innerHTML.includes('Hacia la derecha')) {
+                        listarClientesDerecha();
+                    } else {
+                        listarClientesIzquierda();
+                    }
+                }
+            } else {
+                messageElement.textContent = `No se encontró ningún cliente con la cédula ${cedula}.`;
+                messageElement.style.color = '#d48a8a';
+            }
+        }
+
+        // Inicializar la visualización
+        actualizarVisualizacion();
+    </script>
+</body>
+</html>
