@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métodos de Ordenamiento</title>
+    <style>
+        :root {
+            --primary-color: #d8b4f8; /* lila pastel */
+            --secondary-color: #f5accb; /* rosa suave */
+            --accent-color: #fcd6f6; /* rosado muy claro */
+            --background-color: #fff7fb;
+            --card-bg: #ffffff;
+            --text-color: #3a3a3a;
+            --text-light: #888;
+            --border-color: #ebd4f5;
+            --success-color: #e07cb4; /* color para barras o acento visual */
+        }
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+    
+        body {
+            background: linear-gradient(135deg, #fff7fb, #fceeff);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+    
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+    
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+    
+        .menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+    
+        .menu button {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 160px;
+        }
+    
+        .menu button:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+    
+        .content {
+            margin-top: 20px;
+        }
+    
+        #config-panel {
+            background-color: var(--accent-color);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+    
+        #config-panel h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+    
+        .form-group {
+            margin-bottom: 15px;
+        }
+    
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+    
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: #fff;
+        }
+    
+        button#generar {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: block;
+            margin: 20px auto;
+            min-width: 200px;
+        }
+    
+        button#generar:hover {
+            background-color: var(--primary-color);
+        }
+    
+        .result-section {
+            margin-top: 30px;
+        }
+    
+        .array-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            height: 200px;
+            align-items: flex-end;
+        }
+    
+        .array-bar {
+            width: 8px;
+            margin: 0 1px;
+            background-color: var(--success-color);
+            transition: height 0.2s ease;
+        }
+    
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+    
+        .stat-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
+    
+        .stat-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+    
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+    
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+    
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+    
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+    
+        .comparison-table tr:nth-child(even) {
+            background-color: #fdf1f9;
+        }
+    
+        .hidden {
+            display: none;
+        }
+    
+        .visualization {
+            margin-top: 40px;
+        }
+    
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+    
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            position: relative;
+            color: var(--text-light);
+        }
+    
+        .tab.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+    
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+    
+        .tab-content {
+            display: none;
+        }
+    
+        .tab-content.active {
+            display: block;
+        }
+    
+        .array-info {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-light);
+        }
+    
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+    
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+    
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Métodos de Ordenamiento</h1>
+        
+        <div class="menu">
+            <button id="bubbleSort">Método Burbuja</button>
+            <button id="selectionSort">Método Secuencial</button>
+            <button id="quickSort">Método Quicksort</button>
+            <button id="compareAll">Comparar Métodos</button>
+        </div>
+        
+        <div class="content">
+            <div id="sorting-section">
+                <div id="config-panel">
+                    <h3>Configuración</h3>
+                    <div class="form-group">
+                        <label for="array-size">Tamaño de la lista:</label>
+                        <input type="number" id="array-size" min="5" max="100" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label for="array-speed">Velocidad de visualización:</label>
+                        <input type="range" id="array-speed" min="1" max="100" value="50">
+                    </div>
+                    <button id="generar">Generar Lista Aleatoria</button>
+                </div>
+                
+                <div class="array-container" id="array-visual"></div>
+                
+                <div class="array-info">
+                    <p id="array-original"></p>
+                    <p id="array-sorted" class="hidden"></p>
+                </div>
+                
+                <div class="loading hidden" id="loading">
+                    <span class="spinner"></span> Ordenando...
+                </div>
+                
+                <div class="stats-container hidden" id="stats">
+                    <div class="stat-card">
+                        <h4>Tiempo de Ejecución</h4>
+                        <p class="stat-value" id="time-stat">0 ms</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Comparaciones</h4>
+                        <p class="stat-value" id="comparisons-stat">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Intercambios</h4>
+                        <p class="stat-value" id="swaps-stat">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="comparison-section" class="hidden">
+                <div id="config-panel">
+                    <h3>Configuración para Comparación</h3>
+                    <div class="form-group">
+                        <label for="comparison-size">Tamaño de la lista:</label>
+                        <input type="number" id="comparison-size" min="5" max="100" value="30">
+                    </div>
+                    <button id="compare-button">Iniciar Comparación</button>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab active" data-tab="table">Tabla</button>
+                    <button class="tab" data-tab="chart">Gráfico</button>
+                </div>
+                
+                <div class="tab-content active" id="table-content">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Método</th>
+                                <th>Tiempo (ms)</th>
+                                <th>Comparaciones</th>
+                                <th>Intercambios</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-results">
+                            <!-- Contenido generado por JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="tab-content" id="chart-content">
+                    <div class="visualization">
+                        <div class="array-container" id="bubble-visual"></div>
+                        <p>Método Burbuja</p>
+                        
+                        <div class="array-container" id="selection-visual"></div>
+                        <p>Método Secuencial</p>
+                        
+                        <div class="array-container" id="quick-visual"></div>
+                        <p>Método Quicksort</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Demostración de Algoritmos de Ordenamiento - 2025</p>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let array = [];
+        let arrayBars = [];
+        let currentSortMethod = null;
+        let animationSpeed = 50;
+        let isSorting = false;
+        
+        // Elementos DOM
+        const arraySizeInput = document.getElementById('array-size');
+        const arraySpeedInput = document.getElementById('array-speed');
+        const arrayVisual = document.getElementById('array-visual');
+        const arrayOriginal = document.getElementById('array-original');
+        const arraySorted = document.getElementById('array-sorted');
+        const generateButton = document.getElementById('generar');
+        const bubbleSortButton = document.getElementById('bubbleSort');
+        const selectionSortButton = document.getElementById('selectionSort');
+        const quickSortButton = document.getElementById('quickSort');
+        const compareAllButton = document.getElementById('compareAll');
+        const sortingSection = document.getElementById('sorting-section');
+        const comparisonSection = document.getElementById('comparison-section');
+        const compareButton = document.getElementById('compare-button');
+        const comparisonSize = document.getElementById('comparison-size');
+        const comparisonResults = document.getElementById('comparison-results');
+        const loadingElement = document.getElementById('loading');
+        const statsElement = document.getElementById('stats');
+        const timeStatElement = document.getElementById('time-stat');
+        const comparisonsStatElement = document.getElementById('comparisons-stat');
+        const swapsStatElement = document.getElementById('swaps-stat');
+        
+        // Inicializar
+        window.addEventListener('DOMContentLoaded', () => {
+            generateRandomArray();
+            setupEventListeners();
+            setupTabs();
+        });
+        
+        // Configurar listeners de eventos
+        function setupEventListeners() {
+            generateButton.addEventListener('click', generateRandomArray);
+            arraySpeedInput.addEventListener('input', updateAnimationSpeed);
+            bubbleSortButton.addEventListener('click', () => setupSortMethod('bubble'));
+            selectionSortButton.addEventListener('click', () => setupSortMethod('selection'));
+            quickSortButton.addEventListener('click', () => setupSortMethod('quick'));
+            compareAllButton.addEventListener('click', showComparisonSection);
+            compareButton.addEventListener('click', compareAllMethods);
+        }
+        
+        // Configurar pestañas
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Activar tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Mostrar contenido
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-content`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Generar array aleatorio
+        function generateRandomArray() {
+            const size = parseInt(arraySizeInput.value);
+            array = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
+            updateArrayVisual();
+            arrayOriginal.textContent = `Lista original: [${array.slice(0, 10).join(', ')}${array.length > 10 ? '...' : ''}]`;
+            arraySorted.classList.add('hidden');
+            statsElement.classList.add('hidden');
+            currentSortMethod = null;
+        }
+        
+        // Actualizar velocidad de animación
+        function updateAnimationSpeed() {
+            animationSpeed = 101 - parseInt(arraySpeedInput.value);
+        }
+        
+        // Actualizar visualización del array
+        function updateArrayVisual() {
+            arrayVisual.innerHTML = '';
+            arrayBars = [];
+            
+            const maxValue = Math.max(...array);
+            
+            array.forEach(value => {
+                const bar = document.createElement('div');
+                bar.className = 'array-bar';
+                bar.style.height = `${(value / maxValue) * 180}px`;
+                arrayVisual.appendChild(bar);
+                arrayBars.push(bar);
+            });
+        }
+        
+        // Preparar método de ordenamiento
+        function setupSortMethod(method) {
+            if (isSorting) return;
+            
+            sortingSection.classList.remove('hidden');
+            comparisonSection.classList.add('hidden');
+            currentSortMethod = method;
+            
+            runSortingAlgorithm(method);
+        }
+        
+        // Ejecutar algoritmo de ordenamiento
+        async function runSortingAlgorithm(method) {
+            if (isSorting) return;
+            isSorting = true;
+            
+            loadingElement.classList.remove('hidden');
+            statsElement.classList.add('hidden');
+            
+            // Crear copia del array para no modificar el original
+            let arrayCopy = [...array];
+            let animations = [];
+            let stats = {
+                comparisons: 0,
+                swaps: 0
+            };
+            
+            // Generar animaciones según el método
+            const startTime = performance.now();
+            
+            if (method === 'bubble') {
+                animations = bubbleSort(arrayCopy, stats);
+            } else if (method === 'selection') {
+                animations = selectionSort(arrayCopy, stats);
+            } else if (method === 'quick') {
+                animations = [];
+                arrayCopy = [...array]; // Restablecemos para quicksort
+                await quickSort(arrayCopy, 0, arrayCopy.length - 1, animations, stats);
+            }
+            
+            const endTime = performance.now();
+            const executionTime = endTime - startTime;
+            
+            // Actualizar estadísticas
+            timeStatElement.textContent = `${executionTime.toFixed(2)} ms`;
+            comparisonsStatElement.textContent = stats.comparisons;
+            swapsStatElement.textContent = stats.swaps;
+            
+            // Ejecutar animaciones
+            await animateSort(animations);
+            
+            // Mostrar resultados
+            arraySorted.textContent = `Lista ordenada: [${arrayCopy.slice(0, 10).join(', ')}${arrayCopy.length > 10 ? '...' : ''}]`;
+            arraySorted.classList.remove('hidden');
+            loadingElement.classList.add('hidden');
+            statsElement.classList.remove('hidden');
+            
+            isSorting = false;
+        }
+        
+        // Método Burbuja
+        function bubbleSort(arr, stats) {
+            const animations = [];
+            const n = arr.length;
+            
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    // Comparar elementos adyacentes
+                    animations.push({type: 'compare', indices: [j, j + 1]});
+                    stats.comparisons++;
+                    
+                    if (arr[j] > arr[j + 1]) {
+                        // Intercambiar elementos
+                        animations.push({type: 'swap', indices: [j, j + 1]});
+                        stats.swaps++;
+                        
+                        const temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
+                    }
+                }
+                // Marcar elemento como colocado
+                animations.push({type: 'sorted', index: n - i - 1});
+            }
+            
+            return animations;
+        }
+        
+        // Método Secuencial (Selección)
+        function selectionSort(arr, stats) {
+            const animations = [];
+            const n = arr.length;
+            
+            for (let i = 0; i < n; i++) {
+                let minIndex = i;
+                
+                for (let j = i + 1; j < n; j++) {
+                    // Comparar para encontrar el mínimo
+                    animations.push({type: 'compare', indices: [minIndex, j]});
+                    stats.comparisons++;
+                    
+                    if (arr[j] < arr[minIndex]) {
+                        minIndex = j;
+                    }
+                }
+                
+                if (minIndex !== i) {
+                    // Intercambiar con el mínimo encontrado
+                    animations.push({type: 'swap', indices: [i, minIndex]});
+                    stats.swaps++;
+                    
+                    const temp = arr[i];
+                    arr[i] = arr[minIndex];
+                    arr[minIndex] = temp;
+                }
+                
+                // Marcar elemento como colocado
+                animations.push({type: 'sorted', index: i});
+            }
+            
+            return animations;
+        }
+        
+        // Método Quicksort
+        async function quickSort(arr, low, high, animations, stats) {
+            if (low < high) {
+                // Particionar y obtener índice del pivote
+                const pivotIndex = await partition(arr, low, high, animations, stats);
+                
+                // Ordenar elementos antes y después del pivote
+                await quickSort(arr, low, pivotIndex - 1, animations, stats);
+                await quickSort(arr, pivotIndex + 1, high, animations, stats);
+            }
+        }
+        
+        // Función de partición para Quicksort
+        async function partition(arr, low, high, animations, stats) {
+            // Elegir el último elemento como pivote
+            const pivot = arr[high];
+            animations.push({type: 'pivot', index: high});
+            
+            let i = low - 1;
+            
+            for (let j = low; j < high; j++) {
+                // Comparar con el pivote
+                animations.push({type: 'compare', indices: [j, high]});
+                stats.comparisons++;
+                
+                if (arr[j] <= pivot) {
+                    i++;
+                    
+                    // Intercambiar si es necesario
+                    if (i !== j) {
+                        animations.push({type: 'swap', indices: [i, j]});
+                        stats.swaps++;
+                        
+                        const temp = arr[i];
+                        arr[i] = arr[j];
+                        arr[j] = temp;
+                    }
+                }
+            }
+            
+            // Colocar el pivote en su posición correcta
+            if (i + 1 !== high) {
+                animations.push({type: 'swap', indices: [i + 1, high]});
+                stats.swaps++;
+                
+                const temp = arr[i + 1];
+                arr[i + 1] = arr[high];
+                arr[high] = temp;
+            }
+            
+            // Marcar posición del pivote como colocada
+            animations.push({type: 'sorted', index: i + 1});
+            
+            return i + 1;
+        }
+        
+        // Animar ordenamiento
+        async function animateSort(animations) {
+            for (let i = 0; i < animations.length; i++) {
+                const animation = animations[i];
+                
+                if (animation.type === 'compare') {
+                    // Resaltar elementos comparados
+                    arrayBars[animation.indices[0]].style.backgroundColor = '#ffc107';
+                    arrayBars[animation.indices[1]].style.backgroundColor = '#ffc107';
+                    
+                    await sleep(animationSpeed);
+                    
+                    // Restaurar color
+                    arrayBars[animation.indices[0]].style.backgroundColor = '#4a6fa5';
+                    arrayBars[animation.indices[1]].style.backgroundColor = '#4a6fa5';
+                } 
+                else if (animation.type === 'swap') {
+                    // Resaltar elementos a intercambiar
+                    arrayBars[animation.indices[0]].style.backgroundColor = '#dc3545';
+                    arrayBars[animation.indices[1]].style.backgroundColor = '#dc3545';
+                    
+                    await sleep(animationSpeed);
+                    
+                    // Intercambiar alturas
+                    const tempHeight = arrayBars[animation.indices[0]].style.height;
+                    arrayBars[animation.indices[0]].style.height = arrayBars[animation.indices[1]].style.height;
+                    arrayBars[animation.indices[1]].style.height = tempHeight;
+                    
+                    // Restaurar color
+                    arrayBars[animation.indices[0]].style.backgroundColor = '#4a6fa5';
+                    arrayBars[animation.indices[1]].style.backgroundColor = '#4a6fa5';
+                    
+                    await sleep(animationSpeed);
+                } 
+                else if (animation.type === 'sorted') {
+                    // Marcar elemento como ordenado
+                    arrayBars[animation.index].style.backgroundColor = '#28a745';
+                } 
+                else if (animation.type === 'pivot') {
+                    // Resaltar pivote
+                    arrayBars[animation.index].style.backgroundColor = '#17a2b8';
+                    await sleep(animationSpeed);
+                }
+            }
+            
+            // Marcar todos como ordenados al final
+            await sleep(500);
+            for (let i = 0; i < arrayBars.length; i++) {
+                arrayBars[i].style.backgroundColor = '#28a745';
+                await sleep(10);
+            }
+        }
+        
+        // Mostrar sección de comparación
+        function showComparisonSection() {
+            sortingSection.classList.add('hidden');
+            comparisonSection.classList.remove('hidden');
+        }
+        
+        // Comparar todos los métodos
+        async function compareAllMethods() {
+            if (isSorting) return;
+            isSorting = true;
+            
+            const size = parseInt(comparisonSize.value);
+            const comparisonArray = Array.from({length: size}, () => Math.floor(Math.random() * 100) + 1);
+            
+            // Limpiar resultados anteriores
+            comparisonResults.innerHTML = '';
+            document.getElementById('bubble-visual').innerHTML = '';
+            document.getElementById('selection-visual').innerHTML = '';
+            document.getElementById('quick-visual').innerHTML = '';
+            
+            // Crear visualizaciones
+            const bubbleBars = createVisualization(comparisonArray, 'bubble-visual');
+            const selectionBars = createVisualization(comparisonArray, 'selection-visual');
+            const quickBars = createVisualization(comparisonArray, 'quick-visual');
+            
+            // Ejecutar métodos y recolectar estadísticas
+            const bubbleStats = await runComparisonSort(comparisonArray, 'bubble', bubbleBars);
+            const selectionStats = await runComparisonSort(comparisonArray, 'selection', selectionBars);
+            const quickStats = await runComparisonSort(comparisonArray, 'quick', quickBars);
+            
+            // Mostrar resultados en la tabla
+            addComparisonRow('Burbuja', bubbleStats);
+            addComparisonRow('Secuencial', selectionStats);
+            addComparisonRow('Quicksort', quickStats);
+            
+            isSorting = false;
+        }
+        
+        // Crear visualización para comparación
+        function createVisualization(arr, containerId) {
+            const container = document.getElementById(containerId);
+            const bars = [];
+            const maxValue = Math.max(...arr);
+            
+            arr.forEach(value => {
+                const bar = document.createElement('div');
+                bar.className = 'array-bar';
+                bar.style.height = `${(value / maxValue) * 180}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+            
+            return bars;
+        }
+        
+        // Ejecutar método de ordenamiento para comparación
+        async function runComparisonSort(arr, method, bars) {
+            // Crear copia del array
+            const arrayCopy = [...arr];
+            const animations = [];
+            const stats = {
+                comparisons: 0,
+                swaps: 0
+            };
+            
+            // Medir tiempo de ejecución
+            const startTime = performance.now();
+            
+            if (method === 'bubble') {
+                bubbleSort(arrayCopy, stats);
+            } else if (method === 'selection') {
+                selectionSort(arrayCopy, stats);
+            } else if (method === 'quick') {
+                await quickSort(arrayCopy, 0, arrayCopy.length - 1, animations, stats);
+            }
+            
+            const endTime = performance.now();
+            const executionTime = endTime - startTime;
+            
+            // Visualizar array ordenado
+            const maxValue = Math.max(...arrayCopy);
+            for (let i = 0; i < arrayCopy.length; i++) {
+                bars[i].style.height = `${(arrayCopy[i] / maxValue) * 180}px`;
+                bars[i].style.backgroundColor = '#28a745';
+                await sleep(10);
+            }
+            
+            return {
+                time: executionTime.toFixed(2),
+                comparisons: stats.comparisons,
+                swaps: stats.swaps
+            };
+        }
+        
+        // Añadir fila a la tabla de comparación
+        function addComparisonRow(method, stats) {
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${method}</td>
+                <td>${stats.time}</td>
+                <td>${stats.comparisons}</td>
+                <td>${stats.swaps}</td>
+            `;
+            
+            comparisonResults.appendChild(row);
+        }
+        
+        // Función para simular espera
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
