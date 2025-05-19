@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programa de Bicola (Deque)</title>
+    <style>
+       /* Importar fuente Poppins desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* Estilos generales */
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff0f6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+}
+
+/* Título principal */
+h1 {
+    text-align: center;
+    color: #8e24aa;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #ba68c8;
+    padding-bottom: 10px;
+}
+
+/* Menú */
+.menu {
+    background-color: #fce4ec;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 5px solid #ce93d8;
+}
+
+.menu h2 {
+    margin-top: 0;
+    color: #ab47bc;
+}
+
+/* Botones */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #ba68c8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #9c27b0;
+}
+
+.btn-exit {
+    background-color: #f06292;
+}
+
+.btn-exit:hover {
+    background-color: #e91e63;
+}
+
+/* Resultados */
+#resultados {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    min-height: 200px;
+    background-color: #f8bbd0;
+}
+
+.resultado-titulo {
+    font-weight: 600;
+    color: #6a1b9a;
+    margin-bottom: 10px;
+}
+
+/* Visualización bicola */
+.bicola-container {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.bicola-titulo {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ab47bc;
+}
+
+.bicola-elementos {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.elemento {
+    padding: 10px 15px;
+    margin: 0 5px;
+    background-color: #ce93d8;
+    color: white;
+    border-radius: 5px;
+    position: relative;
+}
+
+.elemento::after {
+    content: "→";
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ab47bc;
+    font-weight: bold;
+}
+
+.elemento:last-child::after {
+    display: none;
+}
+
+.empty-message {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Etiquetas */
+.labels {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+}
+
+.label {
+    font-weight: bold;
+    color: #f06292;
+}
+
+/* Entradas */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #6a1b9a;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Programa de Bicola (Deque)</h1>
+        
+        <!-- Área de visualización de la bicola -->
+        <div class="bicola-container">
+            <div class="bicola-titulo">Visualización de la Bicola:</div>
+            <div class="labels">
+                <div class="label">Izquierda</div>
+                <div class="label">Derecha</div>
+            </div>
+            <div class="bicola-elementos" id="visualizacionBicola">
+                <div class="empty-message">La bicola está vacía</div>
+            </div>
+        </div>
+
+        <!-- Menú de opciones -->
+        <div class="menu">
+            <h2>Menú de Opciones</h2>
+            
+            <!-- Inserción por la derecha -->
+            <div class="input-group">
+                <label for="valorDerecha">Valor a insertar por la derecha:</label>
+                <input type="text" id="valorDerecha" placeholder="Ingrese un valor">
+            </div>
+            <button class="btn" id="btnInsertarDerecha">1. Insertar por la derecha</button>
+            
+            <!-- Inserción por la izquierda -->
+            <div class="input-group">
+                <label for="valorIzquierda">Valor a insertar por la izquierda:</label>
+                <input type="text" id="valorIzquierda" placeholder="Ingrese un valor">
+            </div>
+            <button class="btn" id="btnInsertarIzquierda">2. Insertar por la izquierda</button>
+            
+            <!-- Atender por la derecha -->
+            <button class="btn" id="btnAtenderDerecha">3. Atender por la derecha</button>
+            
+            <!-- Atender por la izquierda -->
+            <button class="btn" id="btnAtenderIzquierda">4. Atender por la izquierda</button>
+            
+            <!-- Listar -->
+            <button class="btn" id="btnListar">5. Listar</button>
+            
+            <!-- Salir -->
+            <button class="btn btn-exit" id="btnSalir">6. Salir</button>
+        </div>
+
+        <!-- Área de resultados -->
+        <div id="resultados">
+            <div class="resultado-titulo">Resultados:</div>
+            <div id="mensajes"></div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * @class Nodo
+         * @description Clase que representa un nodo de la lista simple
+         */
+        class Nodo {
+            /**
+             * @constructor
+             * @param {*} dato - El valor a almacenar en el nodo
+             */
+            constructor(dato) {
+                this.dato = dato;       // Valor almacenado en el nodo
+                this.siguiente = null;  // Referencia al siguiente nodo en la lista
+            }
+        }
+
+        /**
+         * @class Bicola
+         * @description Implementación de una Bicola (Deque) utilizando una lista simple
+         */
+        class Bicola {
+            /**
+             * @constructor
+             * @description Inicializa una bicola vacía
+             */
+            constructor() {
+                this.primero = null;  // Referencia al primer nodo (izquierda)
+                this.ultimo = null;   // Referencia al último nodo (derecha)
+                this.tamaño = 0;      // Contador de elementos en la bicola
+            }
+
+            /**
+             * @method insertarDerecha
+             * @description Inserta un elemento al final (derecha) de la bicola
+             * @param {*} dato - El valor a insertar
+             * @returns {string} - Mensaje de confirmación
+             */
+            insertarDerecha(dato) {
+                const nuevoNodo = new Nodo(dato);
+                
+                // Si la bicola está vacía
+                if (this.estaVacia()) {
+                    this.primero = nuevoNodo;
+                    this.ultimo = nuevoNodo;
+                } else {
+                    // Conectar el nuevo nodo al final de la lista
+                    this.ultimo.siguiente = nuevoNodo;
+                    this.ultimo = nuevoNodo;
+                }
+                
+                this.tamaño++;
+                return `Elemento "${dato}" insertado por la derecha.`;
+            }
+
+            /**
+             * @method insertarIzquierda
+             * @description Inserta un elemento al inicio (izquierda) de la bicola
+             * @param {*} dato - El valor a insertar
+             * @returns {string} - Mensaje de confirmación
+             */
+            insertarIzquierda(dato) {
+                const nuevoNodo = new Nodo(dato);
+                
+                // Si la bicola está vacía
+                if (this.estaVacia()) {
+                    this.primero = nuevoNodo;
+                    this.ultimo = nuevoNodo;
+                } else {
+                    // Conectar el nuevo nodo al inicio de la lista
+                    nuevoNodo.siguiente = this.primero;
+                    this.primero = nuevoNodo;
+                }
+                
+                this.tamaño++;
+                return `Elemento "${dato}" insertado por la izquierda.`;
+            }
+
+            /**
+             * @method atenderDerecha
+             * @description Elimina y devuelve el elemento del extremo derecho (final)
+             * @returns {Object} - Objeto con el resultado y mensaje
+             */
+            atenderDerecha() {
+                // Si la bicola está vacía
+                if (this.estaVacia()) {
+                    return {
+                        exito: false,
+                        mensaje: "La bicola está vacía. No se puede atender por la derecha.",
+                        dato: null
+                    };
+                }
+                
+                // Si solo hay un elemento
+                if (this.primero === this.ultimo) {
+                    const dato = this.ultimo.dato;
+                    this.primero = null;
+                    this.ultimo = null;
+                    this.tamaño = 0;
+                    return {
+                        exito: true,
+                        mensaje: `Elemento "${dato}" atendido por la derecha.`,
+                        dato: dato
+                    };
+                }
+                
+                // Buscar el penúltimo nodo
+                let actual = this.primero;
+                while (actual.siguiente !== this.ultimo) {
+                    actual = actual.siguiente;
+                }
+                
+                const dato = this.ultimo.dato;
+                this.ultimo = actual;
+                this.ultimo.siguiente = null;
+                this.tamaño--;
+                
+                return {
+                    exito: true,
+                    mensaje: `Elemento "${dato}" atendido por la derecha.`,
+                    dato: dato
+                };
+            }
+
+            /**
+             * @method atenderIzquierda
+             * @description Elimina y devuelve el elemento del extremo izquierdo (inicio)
+             * @returns {Object} - Objeto con el resultado y mensaje
+             */
+            atenderIzquierda() {
+                // Si la bicola está vacía
+                if (this.estaVacia()) {
+                    return {
+                        exito: false,
+                        mensaje: "La bicola está vacía. No se puede atender por la izquierda.",
+                        dato: null
+                    };
+                }
+                
+                const dato = this.primero.dato;
+                
+                // Si solo hay un elemento
+                if (this.primero === this.ultimo) {
+                    this.primero = null;
+                    this.ultimo = null;
+                } else {
+                    this.primero = this.primero.siguiente;
+                }
+                
+                this.tamaño--;
+                return {
+                    exito: true,
+                    mensaje: `Elemento "${dato}" atendido por la izquierda.`,
+                    dato: dato
+                };
+            }
+
+            /**
+             * @method listar
+             * @description Obtiene todos los elementos de la bicola
+             * @returns {Object} - Objeto con los elementos y un mensaje
+             */
+            listar() {
+                if (this.estaVacia()) {
+                    return {
+                        elementos: [],
+                        mensaje: "La bicola está vacía.",
+                        total: 0
+                    };
+                }
+                
+                let elementos = [];
+                let actual = this.primero;
+                
+                while (actual !== null) {
+                    elementos.push(actual.dato);
+                    actual = actual.siguiente;
+                }
+                
+                return {
+                    elementos: elementos,
+                    mensaje: `Total de elementos: ${this.tamaño}`,
+                    total: this.tamaño
+                };
+            }
+
+            /**
+             * @method estaVacia
+             * @description Verifica si la bicola está vacía
+             * @returns {boolean} Verdadero si la bicola está vacía, falso en caso contrario
+             */
+            estaVacia() {
+                return this.primero === null;
+            }
+        }
+
+        // Crear una instancia de la bicola
+        const bicola = new Bicola();
+
+        /**
+         * @function actualizarVisualizacion
+         * @description Actualiza la visualización gráfica de la bicola
+         */
+        function actualizarVisualizacion() {
+            const visualizacion = document.getElementById('visualizacionBicola');
+            const resultado = bicola.listar();
+            
+            // Limpiar visualización anterior
+            visualizacion.innerHTML = '';
+            
+            if (resultado.elementos.length === 0) {
+                visualizacion.innerHTML = '<div class="empty-message">La bicola está vacía</div>';
+                return;
+            }
+            
+            // Crear elementos visuales para cada elemento de la bicola
+            resultado.elementos.forEach(elemento => {
+                const div = document.createElement('div');
+                div.className = 'elemento';
+                div.textContent = elemento;
+                visualizacion.appendChild(div);
+            });
+        }
+
+        /**
+         * @function agregarMensaje
+         * @description Agrega un mensaje al área de resultados
+         * @param {string} mensaje - El mensaje a agregar
+         */
+        function agregarMensaje(mensaje) {
+            const mensajes = document.getElementById('mensajes');
+            const parrafo = document.createElement('p');
+            parrafo.textContent = mensaje;
+            mensajes.appendChild(parrafo);
+            // Desplazar al último mensaje
+            mensajes.scrollTop = mensajes.scrollHeight;
+        }
+
+        // Asignar eventos a los botones
+        document.addEventListener('DOMContentLoaded', function() {
+            // Insertar por la derecha
+            document.getElementById('btnInsertarDerecha').addEventListener('click', function() {
+                const input = document.getElementById('valorDerecha');
+                const valor = input.value.trim();
+                
+                if (valor === '') {
+                    agregarMensaje('Error: Debe ingresar un valor para insertar por la derecha.');
+                    return;
+                }
+                
+                const mensaje = bicola.insertarDerecha(valor);
+                agregarMensaje(mensaje);
+                input.value = '';
+                actualizarVisualizacion();
+            });
+            
+            // Insertar por la izquierda
+            document.getElementById('btnInsertarIzquierda').addEventListener('click', function() {
+                const input = document.getElementById('valorIzquierda');
+                const valor = input.value.trim();
+                
+                if (valor === '') {
+                    agregarMensaje('Error: Debe ingresar un valor para insertar por la izquierda.');
+                    return;
+                }
+                
+                const mensaje = bicola.insertarIzquierda(valor);
+                agregarMensaje(mensaje);
+                input.value = '';
+                actualizarVisualizacion();
+            });
+            
+            // Atender por la derecha
+            document.getElementById('btnAtenderDerecha').addEventListener('click', function() {
+                const resultado = bicola.atenderDerecha();
+                agregarMensaje(resultado.mensaje);
+                actualizarVisualizacion();
+            });
+            
+            // Atender por la izquierda
+            document.getElementById('btnAtenderIzquierda').addEventListener('click', function() {
+                const resultado = bicola.atenderIzquierda();
+                agregarMensaje(resultado.mensaje);
+                actualizarVisualizacion();
+            });
+            
+            // Listar
+            document.getElementById('btnListar').addEventListener('click', function() {
+                const resultado = bicola.listar();
+                
+                if (resultado.elementos.length === 0) {
+                    agregarMensaje(resultado.mensaje);
+                } else {
+                    agregarMensaje('Elementos en la bicola (de izquierda a derecha):');
+                    agregarMensaje(resultado.elementos.join(' → '));
+                    agregarMensaje(resultado.mensaje);
+                }
+            });
+            
+            // Salir
+            document.getElementById('btnSalir').addEventListener('click', function() {
+                if (confirm('¿Está seguro que desea salir del programa?')) {
+                    agregarMensaje('Gracias por usar el programa de Bicola. ¡Hasta pronto!');
+                    // Deshabilitar todos los botones
+                    const botones = document.querySelectorAll('.btn');
+                    botones.forEach(boton => {
+                        boton.disabled = true;
+                        boton.style.opacity = '0.5';
+                        boton.style.cursor = 'not-allowed';
+                    });
+                }
+            });
+            
+            // Inicializar la visualización
+            actualizarVisualizacion();
+            agregarMensaje('Bienvenido al programa de Bicola. Utilice el menú para realizar operaciones.');
+        });
+    </script>
+</body>
+</html>
